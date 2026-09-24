@@ -17,6 +17,7 @@ function renderDegrees() {
   root.querySelectorAll(".deg").forEach((btn) => {
     btn.onclick = () => {
       const iv = +btn.dataset.iv;
+      state.chordFilter = null;
       if (state.focus.has(iv)) state.focus.delete(iv);
       else state.focus.add(iv);
       render();
@@ -44,7 +45,13 @@ function renderChords() {
   root.querySelectorAll(".chord").forEach((el) => {
     el.onclick = () => {
       const idx = +el.dataset.idx;
-      state.chordFilter = state.chordFilter === idx ? null : idx;
+      if (state.chordFilter === idx) {
+        state.chordFilter = null;
+        state.focus = new Set();
+      } else {
+        state.chordFilter = idx;
+        state.focus = new Set(CHORD_TYPES[idx].iv);
+      }
       render();
     };
   });

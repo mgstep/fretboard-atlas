@@ -11,14 +11,9 @@ function intervalFromRoot(pc) {
 
 function noteClass(pc) {
   const iv = intervalFromRoot(pc);
-  if (state.chordFilter != null) {
-    const chord = CHORD_TYPES[state.chordFilter];
-    if (chord.iv.includes(iv)) return iv === 0 ? "root" : "scale";
-    return "ghost";
-  }
-  if (!SCALES[state.scale].iv.includes(iv)) return "ghost";
   if (iv === 0) return "root";
   if (state.focus.has(iv)) return "focus";
+  if (!SCALES[state.scale].iv.includes(iv)) return "ghost";
   return "scale";
 }
 
