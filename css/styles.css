@@ -200,7 +200,30 @@ main {
   text-align: center;
 }
 .pos.on { background: #3a3420; border-color: #8a7428; color: var(--focus); }
-.pos:disabled { cursor: default; }
+.nashville {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.nash-key {
+  font-size: 12px;
+  color: var(--muted);
+  margin-right: 4px;
+}
+.nash {
+  min-width: 42px;
+  text-align: center;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+.nash.on { background: #3a3420; border-color: #8a7428; color: var(--focus); }
+.nashville-line {
+  margin-top: 8px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: var(--focus);
+}
 .inlays {
   position: absolute;
   left: 36px; right: 0; top: 0; bottom: 0;

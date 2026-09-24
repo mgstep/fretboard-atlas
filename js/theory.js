@@ -120,6 +120,15 @@ function shortChordName(rootName, kind) {
   return rootName + kind;
 }
 
+function nashvilleNumber(index, kind, seven) {
+  const n = seven ? String(index + 1) : intervalLabel(SCALES[state.scale].iv[index]);
+  if (kind === "maj") return n;
+  if (kind === "min") return n + "m";
+  if (kind === "dim") return n + "°";
+  if (kind === "aug") return n + "+";
+  return n + kind;
+}
+
 function romanNumeral(index, kind, seven) {
   if (!seven) return intervalLabel(SCALES[state.scale].iv[index]);
   let roman = ROMAN[index] || String(index + 1);
@@ -144,6 +153,7 @@ function diatonicChords() {
       rootIv,
       tones,
       roman: romanNumeral(i, kind, seven),
+      nashville: nashvilleNumber(i, kind, seven),
       label: shortChordName(rootName, kind),
       notes: tones.map((t) => pcName(state.scaleKey + t)).join(" "),
     };

@@ -37,6 +37,7 @@ function render() {
   $("linkKeys").classList.toggle("active", state.link);
   renderInfo();
   renderDegrees();
+  renderNashville();
   renderDiatonic();
   renderChords();
   renderPositions();

@@ -4,6 +4,9 @@ function renderInfo() {
   document.getElementById("formula").textContent = sc.iv.map((i) => DEGREE_NAMES[i]).join("  ·  ");
   document.getElementById("scaleNotes").textContent = notes.join("  –  ");
   document.getElementById("scaleHint").textContent = sc.hint;
+  const numbers = diatonicChords().map((c) => c.nashville).join("  ·  ");
+  const line = document.getElementById("nashvilleLine");
+  if (line) line.textContent = numbers ? "Nashville  " + numbers : "";
 }
 
 function renderDegrees() {
@@ -62,6 +65,41 @@ function renderChords() {
   });
 }
 
+function selectDiatonic(i) {
+  if (state.diatonicIndex === i) {
+    state.diatonicIndex = null;
+    state.chordRoot = null;
+    state.focus = new Set();
+  } else {
+    const chord = diatonicChords()[i];
+    state.diatonicIndex = i;
+    state.chordFilter = null;
+    state.chordRoot = chord.rootIv;
+    state.focus = new Set(chord.tones);
+  }
+  render();
+}
+
+function renderNashville() {
+  const root = document.getElementById("nashville");
+  const chords = diatonicChords();
+  if (!chords.length) {
+    root.innerHTML = "";
+    return;
+  }
+  const keyName = pcName(state.scaleKey) + (isMinorFamily() ? " minor" : "");
+  root.innerHTML =
+    `<span class="nash-key">${keyName}</span>` +
+    chords
+      .map((c) => {
+        const sel = state.diatonicIndex === c.i ? "on" : "";
+        return `<button type="button" class="nash ${sel}" data-i="${c.i}" title="${c.label} · ${c.notes}">${c.nashville}</button>`;
+      })
+      .join("");
+  root.querySelectorAll(".nash").forEach((btn) => {
+    btn.onclick = () => selectDiatonic(+btn.dataset.i);
+  });
+}
 function renderDiatonic() {
   const root = document.getElementById("diatonic");
   const chords = diatonicChords();
@@ -73,27 +111,13 @@ function renderDiatonic() {
     .map((c) => {
       const sel = state.diatonicIndex === c.i ? "sel" : "";
       return `<div class="chord ${sel}" data-i="${c.i}">
-        <b>${c.roman} · ${c.label}</b>
+        <b>${c.nashville} · ${c.label}</b>
         <span>${c.notes}</span>
       </div>`;
     })
     .join("");
   root.querySelectorAll(".chord").forEach((el) => {
-    el.onclick = () => {
-      const i = +el.dataset.i;
-      if (state.diatonicIndex === i) {
-        state.diatonicIndex = null;
-        state.chordRoot = null;
-        state.focus = new Set();
-      } else {
-        const chord = diatonicChords()[i];
-        state.diatonicIndex = i;
-        state.chordFilter = null;
-        state.chordRoot = chord.rootIv;
-        state.focus = new Set(chord.tones);
-      }
-      render();
-    };
+    el.onclick = () => selectDiatonic(+el.dataset.i);
   });
 }
 
