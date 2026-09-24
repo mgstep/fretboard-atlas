@@ -11,6 +11,7 @@ const state = {
   showIntervals: false,
   positionsOn: false,
   position: 0,
+  progressionMinor: true,
 };
 
 function $(id) {
@@ -35,8 +36,11 @@ function render() {
   $("scaleKey").value = state.scaleKey;
   $("scaleType").value = state.scale;
   $("linkKeys").classList.toggle("active", state.link);
+  $("progMajor").classList.toggle("active", !state.progressionMinor);
+  $("progMinor").classList.toggle("active", state.progressionMinor);
   renderInfo();
   renderDegrees();
+  renderPairings();
   renderNashville();
   renderDiatonic();
   renderChords();
@@ -45,10 +49,17 @@ function render() {
   renderCircle();
 }
 
+function clearProgressionFocus() {
+  state.diatonicIndex = null;
+  state.chordRoot = null;
+  state.focus = new Set();
+}
+
 function bindControls() {
   $("playKey").onchange = (e) => {
     state.playKey = +e.target.value;
     if (state.link) state.scaleKey = state.playKey;
+    clearProgressionFocus();
     render();
   };
   $("scaleKey").onchange = (e) => {
@@ -58,10 +69,11 @@ function bindControls() {
   };
   $("scaleType").onchange = (e) => {
     state.scale = e.target.value;
-    state.focus = new Set();
     state.chordFilter = null;
     state.diatonicIndex = null;
     state.chordRoot = null;
+    state.focus = new Set();
+    if (state.link) state.progressionMinor = isMinorFamily();
     render();
   };
   $("fretCount").onchange = (e) => {
@@ -70,7 +82,10 @@ function bindControls() {
   };
   $("linkKeys").onclick = () => {
     state.link = !state.link;
-    if (state.link) state.scaleKey = state.playKey;
+    if (state.link) {
+      state.scaleKey = state.playKey;
+      state.progressionMinor = isMinorFamily();
+    }
     render();
   };
   $("intervalToggle").onclick = () => {
@@ -82,6 +97,18 @@ function bindControls() {
   $("posToggle").onclick = () => {
     state.positionsOn = !state.positionsOn;
     $("posToggle").classList.toggle("active", state.positionsOn);
+    render();
+  };
+  $("progMajor").onclick = () => {
+    state.progressionMinor = false;
+    state.chordFilter = null;
+    clearProgressionFocus();
+    render();
+  };
+  $("progMinor").onclick = () => {
+    state.progressionMinor = true;
+    state.chordFilter = null;
+    clearProgressionFocus();
     render();
   };
 }

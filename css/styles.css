@@ -200,6 +200,21 @@ main {
   text-align: center;
 }
 .pos.on { background: #3a3420; border-color: #8a7428; color: var(--focus); }
+.seg { display: inline-flex; }
+.seg button { border-radius: 0; }
+.seg button:first-child { border-radius: 8px 0 0 8px; }
+.seg button:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+.pairings { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.pair {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+}
+.pair small { color: var(--muted); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+.pair.on { background: #3a3420; border-color: #8a7428; color: var(--focus); }
+.pair.on small { color: var(--focus); }
 .nashville {
   display: flex;
   flex-wrap: wrap;

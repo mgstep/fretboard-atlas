@@ -16,6 +16,12 @@
       <label>Playing over
         <select id="playKey"></select>
       </label>
+      <label>&nbsp;
+        <span class="seg">
+          <button id="progMajor" type="button">Major</button>
+          <button id="progMinor" type="button">Minor</button>
+        </span>
+      </label>
       <label>Scale key
         <select id="scaleKey"></select>
       </label>
@@ -56,7 +62,8 @@
       </div>
       <div class="chord-bar">
         <h2>Chords in this key</h2>
-        <p class="hint">Triads built on each scale degree. Nashville numbers are the chart for this key. Click either to focus those notes.</p>
+        <p class="hint">The chart is the key you are playing over, not necessarily the scale root. A minor pentatonic over C uses the C major numbers.</p>
+        <div class="pairings" id="pairings"></div>
         <div class="nashville" id="nashville"></div>
         <div class="chords" id="diatonic"></div>
       </div>

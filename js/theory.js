@@ -139,23 +139,97 @@ function romanNumeral(index, kind, seven) {
   return roman;
 }
 
+function progressionIntervals() {
+  return state.progressionMinor
+    ? SCALES["Natural minor (Aeolian)"].iv
+    : SCALES["Major (Ionian)"].iv;
+}
+
+function fromProgression(interval) {
+  const pc = (state.playKey + interval) % 12;
+  return (pc - state.scaleKey + 12) % 12;
+}
+
+const PARENT_DEGREE = {
+  "Major (Ionian)": 0,
+  Dorian: 2,
+  Phrygian: 4,
+  Lydian: 5,
+  Mixolydian: 7,
+  "Natural minor (Aeolian)": 9,
+  Locrian: 11,
+  "Minor pentatonic": 9,
+  Blues: 9,
+  "Major pentatonic": 0,
+  "Major blues": 0,
+  "Harmonic minor": 9,
+  "Melodic minor": 9,
+};
+
+function scalePairings() {
+  const k = state.scaleKey;
+  const minorish = isMinorFamily();
+  const relMajor = (k + 3) % 12;
+  const relMinor = (k + 9) % 12;
+  const list = [
+    {
+      id: "same",
+      label: "Over " + pcName(k) + (minorish ? "m" : ""),
+      blurb: "Same key",
+      playKey: k,
+      minor: minorish,
+    },
+  ];
+  if (minorish) {
+    list.push({
+      id: "rel-maj",
+      label: "Over " + pcName(relMajor),
+      blurb: "Relative major",
+      playKey: relMajor,
+      minor: false,
+    });
+  } else {
+    list.push({
+      id: "rel-min",
+      label: "Over " + pcName(relMinor) + "m",
+      blurb: "Relative minor",
+      playKey: relMinor,
+      minor: true,
+    });
+  }
+  const degree = PARENT_DEGREE[state.scale];
+  if (degree != null) {
+    const parent = (k - degree + 12) % 12;
+    const already = list.some((p) => p.playKey === parent && p.minor === false);
+    if (!already) {
+      list.push({
+        id: "parent",
+        label: "Over " + pcName(parent),
+        blurb: "Parent major",
+        playKey: parent,
+        minor: false,
+      });
+    }
+  }
+  return list;
+}
+
 function diatonicChords() {
-  const ivs = SCALES[state.scale].iv;
-  if (ivs.length < 5) return [];
-  const seven = ivs.length === 7;
+  const ivs = progressionIntervals();
+  const key = state.playKey;
   return ivs.map((rootIv, i) => {
     const tones = [0, 2, 4].map((step) => ivs[(i + step) % ivs.length]);
     const rel = tones.map((t) => (t - rootIv + 12) % 12);
     const kind = triadKind(rel);
-    const rootName = pcName(state.scaleKey + rootIv);
+    const rootName = pcName(key + rootIv);
     return {
       i,
       rootIv,
       tones,
-      roman: romanNumeral(i, kind, seven),
-      nashville: nashvilleNumber(i, kind, seven),
+      roman: romanNumeral(i, kind, true),
+      nashville: nashvilleNumber(i, kind, true),
       label: shortChordName(rootName, kind),
-      notes: tones.map((t) => pcName(state.scaleKey + t)).join(" "),
+      notes: tones.map((t) => pcName(key + t)).join(" "),
     };
   });
 }

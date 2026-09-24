@@ -6,7 +6,8 @@ function renderInfo() {
   document.getElementById("scaleHint").textContent = sc.hint;
   const numbers = diatonicChords().map((c) => c.nashville).join("  ·  ");
   const line = document.getElementById("nashvilleLine");
-  if (line) line.textContent = numbers ? "Nashville  " + numbers : "";
+  const keyName = pcName(state.playKey) + (state.progressionMinor ? " minor" : " major");
+  if (line) line.textContent = numbers ? "Nashville in " + keyName + "  " + numbers : "";
 }
 
 function renderDegrees() {
@@ -74,10 +75,34 @@ function selectDiatonic(i) {
     const chord = diatonicChords()[i];
     state.diatonicIndex = i;
     state.chordFilter = null;
-    state.chordRoot = chord.rootIv;
-    state.focus = new Set(chord.tones);
+    state.chordRoot = fromProgression(chord.rootIv);
+    state.focus = new Set(chord.tones.map(fromProgression));
   }
   render();
+}
+
+function renderPairings() {
+  const root = document.getElementById("pairings");
+  const pairs = scalePairings();
+  root.innerHTML = pairs
+    .map((p) => {
+      const on = state.playKey === p.playKey && state.progressionMinor === p.minor ? "on" : "";
+      return `<button type="button" class="pair ${on}" data-id="${p.id}" title="${p.blurb}">${p.label}<small>${p.blurb}</small></button>`;
+    })
+    .join("");
+  root.querySelectorAll(".pair").forEach((btn) => {
+    btn.onclick = () => {
+      const p = scalePairings().find((item) => item.id === btn.dataset.id);
+      state.playKey = p.playKey;
+      state.progressionMinor = p.minor;
+      state.link = p.playKey === state.scaleKey;
+      state.diatonicIndex = null;
+      state.chordFilter = null;
+      state.chordRoot = null;
+      state.focus = new Set();
+      render();
+    };
+  });
 }
 
 function renderNashville() {
@@ -87,7 +112,7 @@ function renderNashville() {
     root.innerHTML = "";
     return;
   }
-  const keyName = pcName(state.scaleKey) + (isMinorFamily() ? " minor" : "");
+  const keyName = pcName(state.playKey) + (state.progressionMinor ? " minor" : " major");
   root.innerHTML =
     `<span class="nash-key">${keyName}</span>` +
     chords
