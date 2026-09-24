@@ -13,11 +13,10 @@ function noteClass(pc) {
   const iv = intervalFromRoot(pc);
   if (state.chordFilter != null) {
     const chord = CHORD_TYPES[state.chordFilter];
-    if (!chord.iv.includes(iv)) return null;
-    if (iv === 0) return "root";
-    return state.focus.has(iv) ? "focus" : "scale";
+    if (chord.iv.includes(iv)) return iv === 0 ? "root" : "scale";
+    return "ghost";
   }
-  if (!SCALES[state.scale].iv.includes(iv)) return null;
+  if (!SCALES[state.scale].iv.includes(iv)) return "ghost";
   if (iv === 0) return "root";
   if (state.focus.has(iv)) return "focus";
   return "scale";
@@ -99,13 +98,9 @@ function paintBoard() {
     const cell = cells[i];
     const cls = noteClass(cell.pc);
     const el = cell.el;
-    if (!cls) {
-      el.className = "dot off";
-      if (cell.label) cell.label.classList.remove("off");
-      return;
-    }
     if (cell.label) cell.label.classList.add("off");
     el.className = "dot " + cls + (cell.pc === play ? " playing" : "");
-    if (el.textContent !== pcName(cell.pc)) el.textContent = pcName(cell.pc);
+    const name = pcName(cell.pc);
+    if (el.textContent !== name) el.textContent = name;
   }
 }

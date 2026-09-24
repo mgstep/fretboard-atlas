@@ -164,6 +164,12 @@ main {
 .dot.root { background: var(--root); color: #fff; }
 .dot.scale { background: var(--scale); }
 .dot.focus { background: var(--focus); }
+.dot.ghost {
+  background: transparent;
+  color: rgba(232, 234, 237, 0.42);
+  box-shadow: none;
+  font-weight: 500;
+}
 .dot.playing { box-shadow: 0 0 0 2px var(--playing), 0 1px 3px rgba(0,0,0,.45); }
 .inlays {
   position: absolute;
