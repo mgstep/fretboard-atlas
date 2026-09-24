@@ -252,6 +252,27 @@ aside {
 .chord.sel b { color: var(--focus); }
 .chord b { font-weight: 600; }
 .chord span { color: var(--muted); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+.cof { width: 100%; height: auto; display: block; }
+.cof-rim { fill: none; stroke: var(--line); }
+.cof-split, .cof-hub { fill: none; stroke: #343a42; }
+.wedge { fill: #1c2026; stroke: #121416; stroke-width: 1; cursor: pointer; }
+.wedge.on { fill: #3a3420; }
+.wedge:hover { fill: #2a3038; }
+.cof-major, .cof-minor {
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  cursor: pointer;
+}
+.cof-major { fill: var(--text); font-size: 13px; font-weight: 600; }
+.cof-minor { fill: var(--muted); font-size: 10px; }
+.cof-major.on, .cof-minor.on { fill: var(--focus); }
+.cof-center, .cof-center-sub { text-anchor: middle; fill: var(--text); pointer-events: none; }
+.cof-center { font-size: 16px; font-weight: 650; }
+.cof-center-sub { font-size: 10px; fill: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.cof-info { display: flex; flex-direction: column; gap: 4px; font-size: 12px; margin-top: 8px; }
+.cof-info b { color: var(--muted); font-weight: 600; margin-right: 6px; }
+.cof-info .hint { margin-top: 6px; }
 footer {
   padding: 8px 22px 14px;
   color: var(--muted);

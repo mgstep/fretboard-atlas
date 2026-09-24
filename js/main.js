@@ -34,6 +34,7 @@ function render() {
   renderDegrees();
   renderChords();
   paintBoard();
+  renderCircle();
 }
 
 function bindControls() {

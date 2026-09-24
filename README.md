@@ -8,7 +8,8 @@ css/styles.css    dark graphite layout
 js/theory.js      notes, scales, chord formulas
 js/board.js       fretboard drawing
 js/panels.js      scale info, focus degrees, chord list
-js/main.js        state and controls
+js/circle.js       circle of fifths
+js/main.js         state and controls
 ```
 
 ## Features
