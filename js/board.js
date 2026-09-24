@@ -1,3 +1,6 @@
+let builtFrets = 0;
+const cells = [];
+
 function scalePCs() {
   return SCALES[state.scale].iv.map((i) => (state.scaleKey + i) % 12);
 }
@@ -20,39 +23,89 @@ function noteClass(pc) {
   return "scale";
 }
 
-function dotHtml(pc, cls) {
-  const ring = pc === state.playKey ? " playing" : "";
-  return `<div class="dot ${cls}${ring}">${pcName(pc)}</div>`;
-}
-
-function renderBoard() {
+function ensureBoard() {
+  if (builtFrets === state.frets) return;
+  builtFrets = state.frets;
+  cells.length = 0;
   const frets = state.frets;
   const inlayFrets = new Set([3, 5, 7, 9, 12, 15, 17, 19, 21]);
-  let html = `<div class="fret-numbers" style="--cols:${frets}"><div></div>`;
-  for (let f = 1; f <= frets; f++) html += `<div>${f}</div>`;
-  html += `</div><div class="strings" style="position:relative;--cols:${frets}"><div class="inlays">`;
+  const board = document.getElementById("board");
+  board.replaceChildren();
+
+  const numbers = document.createElement("div");
+  numbers.className = "fret-numbers";
+  numbers.style.setProperty("--cols", frets);
+  numbers.appendChild(document.createElement("div"));
   for (let f = 1; f <= frets; f++) {
-    const dbl = f === 12;
-    const mark = inlayFrets.has(f)
-      ? dbl
-        ? "<span></span><span></span>"
-        : "<span></span>"
-      : "";
-    html += `<div class="inlay ${dbl ? "double" : ""}">${mark}</div>`;
+    const n = document.createElement("div");
+    n.textContent = String(f);
+    numbers.appendChild(n);
   }
-  html += `</div>`;
+
+  const strings = document.createElement("div");
+  strings.className = "strings";
+  strings.style.setProperty("--cols", frets);
+
+  const inlays = document.createElement("div");
+  inlays.className = "inlays";
+  for (let f = 1; f <= frets; f++) {
+    const slot = document.createElement("div");
+    slot.className = "inlay" + (f === 12 ? " double" : "");
+    if (inlayFrets.has(f)) {
+      slot.appendChild(document.createElement("span"));
+      if (f === 12) slot.appendChild(document.createElement("span"));
+    }
+    inlays.appendChild(slot);
+  }
+  strings.appendChild(inlays);
 
   OPEN.forEach((openPc, s) => {
-    html += `<div class="string-row" style="--sw:${STRING_WEIGHTS[s]};--cols:${frets}">`;
-    const openCls = noteClass(openPc);
-    html += `<div class="open">${openCls ? dotHtml(openPc, openCls) : STRING_NAMES[s]}</div>`;
+    const row = document.createElement("div");
+    row.className = "string-row";
+    row.style.setProperty("--sw", STRING_WEIGHTS[s]);
+    row.style.setProperty("--cols", frets);
+
+    const open = document.createElement("div");
+    open.className = "open";
+    const openDot = document.createElement("div");
+    openDot.className = "dot";
+    open.appendChild(openDot);
+    const openLabel = document.createElement("span");
+    openLabel.className = "open-name";
+    openLabel.textContent = STRING_NAMES[s];
+    open.appendChild(openLabel);
+    row.appendChild(open);
+    cells.push({ el: openDot, label: openLabel, pc: openPc });
+
     for (let f = 1; f <= frets; f++) {
-      const pc = (openPc + f) % 12;
-      const cls = noteClass(pc);
-      html += `<div class="cell">${cls ? dotHtml(pc, cls) : ""}</div>`;
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      cell.appendChild(dot);
+      row.appendChild(cell);
+      cells.push({ el: dot, label: null, pc: (openPc + f) % 12 });
     }
-    html += `</div>`;
+    strings.appendChild(row);
   });
-  html += `</div>`;
-  document.getElementById("board").innerHTML = html;
+
+  board.append(numbers, strings);
+}
+
+function paintBoard() {
+  ensureBoard();
+  const play = state.playKey;
+  for (let i = 0; i < cells.length; i++) {
+    const cell = cells[i];
+    const cls = noteClass(cell.pc);
+    const el = cell.el;
+    if (!cls) {
+      el.className = "dot off";
+      if (cell.label) cell.label.classList.remove("off");
+      return;
+    }
+    if (cell.label) cell.label.classList.add("off");
+    el.className = "dot " + cls + (cell.pc === play ? " playing" : "");
+    if (el.textContent !== pcName(cell.pc)) el.textContent = pcName(cell.pc);
+  }
 }

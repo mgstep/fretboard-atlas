@@ -33,7 +33,7 @@ function render() {
   renderInfo();
   renderDegrees();
   renderChords();
-  renderBoard();
+  paintBoard();
 }
 
 function bindControls() {
