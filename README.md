@@ -1,6 +1,15 @@
 # Fretboard Atlas
 
-Local macOS/desktop guitar scale explorer. Open `index.html` in a browser.
+Desktop guitar scale explorer. Open `index.html` in a browser. No build step.
+
+```
+index.html        page shell
+css/styles.css    dark graphite layout
+js/theory.js      notes, scales, chord formulas
+js/board.js       fretboard drawing
+js/panels.js      scale info, focus degrees, chord list
+js/main.js        state and controls
+```
 
 ## Features
 - Playing-over key + scale key (link them or offset for modal playing)
@@ -11,4 +20,4 @@ Local macOS/desktop guitar scale explorer. Open `index.html` in a browser.
 - Click a chord to show only its tones on the neck
 - 12 / 15 / 17 / 21 fret views
 
-Default view: A natural minor — the scale from the tab you sent.
+Default view: A natural minor.
