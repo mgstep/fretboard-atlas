@@ -109,6 +109,8 @@ function chooseCircleKey(pc, minor) {
     state.scale = target;
     state.focus = new Set();
     state.chordFilter = null;
+    state.diatonicIndex = null;
+    state.chordRoot = null;
   }
   render();
 }

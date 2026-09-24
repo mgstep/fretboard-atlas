@@ -184,6 +184,23 @@ main {
   font-weight: 500;
 }
 .dot.playing { box-shadow: 0 0 0 2px var(--playing), 0 1px 3px rgba(0,0,0,.45); }
+.dot.faded { opacity: 0.22; }
+.dot.ghost.faded { opacity: 0.12; }
+.pos-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+#positions { display: flex; gap: 6px; }
+#positions.off { opacity: 0.45; }
+.pos {
+  min-width: 32px;
+  text-align: center;
+}
+.pos.on { background: #3a3420; border-color: #8a7428; color: var(--focus); }
+.pos:disabled { cursor: default; }
 .inlays {
   position: absolute;
   left: 36px; right: 0; top: 0; bottom: 0;

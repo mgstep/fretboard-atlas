@@ -6,6 +6,11 @@ const state = {
   focus: new Set(),
   link: true,
   chordFilter: null,
+  diatonicIndex: null,
+  chordRoot: null,
+  showIntervals: false,
+  positionsOn: false,
+  position: 0,
 };
 
 function $(id) {
@@ -32,7 +37,9 @@ function render() {
   $("linkKeys").classList.toggle("active", state.link);
   renderInfo();
   renderDegrees();
+  renderDiatonic();
   renderChords();
+  renderPositions();
   paintBoard();
   renderCircle();
 }
@@ -52,6 +59,8 @@ function bindControls() {
     state.scale = e.target.value;
     state.focus = new Set();
     state.chordFilter = null;
+    state.diatonicIndex = null;
+    state.chordRoot = null;
     render();
   };
   $("fretCount").onchange = (e) => {
@@ -61,6 +70,17 @@ function bindControls() {
   $("linkKeys").onclick = () => {
     state.link = !state.link;
     if (state.link) state.scaleKey = state.playKey;
+    render();
+  };
+  $("intervalToggle").onclick = () => {
+    state.showIntervals = !state.showIntervals;
+    $("intervalToggle").classList.toggle("active", state.showIntervals);
+    $("intervalToggle").textContent = state.showIntervals ? "Intervals" : "Note names";
+    render();
+  };
+  $("posToggle").onclick = () => {
+    state.positionsOn = !state.positionsOn;
+    $("posToggle").classList.toggle("active", state.positionsOn);
     render();
   };
 }

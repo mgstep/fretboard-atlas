@@ -71,3 +71,82 @@ function chordLabel(rootName, name) {
   if (name === "Minor") return rootName + "m";
   return rootName + name;
 }
+
+const BOXES = [
+  { start: 0, end: 3 },
+  { start: 2, end: 6 },
+  { start: 5, end: 8 },
+  { start: 7, end: 10 },
+  { start: 10, end: 13 },
+];
+
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII"];
+
+function intervalLabel(iv) {
+  if (iv === 6) return "b5";
+  return DEGREE_NAMES[iv];
+}
+
+function rootFretLowE() {
+  return (state.scaleKey - OPEN[5] + 12) % 12;
+}
+
+function positionWindow() {
+  const box = BOXES[state.position] || BOXES[0];
+  const root = rootFretLowE();
+  return { start: root + box.start, end: root + box.end };
+}
+
+function triadKind(rel) {
+  const key = rel.slice().sort((a, b) => a - b).join(",");
+  const kinds = {
+    "0,4,7": "maj",
+    "0,3,7": "min",
+    "0,3,6": "dim",
+    "0,4,8": "aug",
+    "0,2,7": "sus2",
+    "0,5,7": "sus4",
+    "0,4,6": "b5",
+    "0,3,8": "m#5",
+  };
+  return kinds[key] || rel.map((n) => intervalLabel(n)).join(" ");
+}
+
+function shortChordName(rootName, kind) {
+  if (kind === "maj") return rootName;
+  if (kind === "min") return rootName + "m";
+  if (kind === "dim") return rootName + "dim";
+  if (kind === "aug") return rootName + "aug";
+  return rootName + kind;
+}
+
+function romanNumeral(index, kind, seven) {
+  if (!seven) return intervalLabel(SCALES[state.scale].iv[index]);
+  let roman = ROMAN[index] || String(index + 1);
+  if (kind === "min" || kind === "dim") roman = roman.toLowerCase();
+  if (kind === "dim") roman += "°";
+  if (kind === "aug") roman += "+";
+  if (kind === "sus2" || kind === "sus4" || kind === "b5" || kind === "m#5") roman += kind;
+  return roman;
+}
+
+function diatonicChords() {
+  const ivs = SCALES[state.scale].iv;
+  if (ivs.length < 5) return [];
+  const seven = ivs.length === 7;
+  return ivs.map((rootIv, i) => {
+    const tones = [0, 2, 4].map((step) => ivs[(i + step) % ivs.length]);
+    const rel = tones.map((t) => (t - rootIv + 12) % 12);
+    const kind = triadKind(rel);
+    const rootName = pcName(state.scaleKey + rootIv);
+    return {
+      i,
+      rootIv,
+      tones,
+      roman: romanNumeral(i, kind, seven),
+      label: shortChordName(rootName, kind),
+      notes: tones.map((t) => pcName(state.scaleKey + t)).join(" "),
+    };
+  });
+}
+

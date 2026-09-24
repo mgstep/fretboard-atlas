@@ -11,7 +11,8 @@ function intervalFromRoot(pc) {
 
 function noteClass(pc) {
   const iv = intervalFromRoot(pc);
-  if (iv === 0) return "root";
+  const home = state.chordRoot == null ? 0 : state.chordRoot;
+  if (iv === home) return "root";
   if (state.focus.has(iv)) return "focus";
   if (!SCALES[state.scale].iv.includes(iv)) return "ghost";
   return "scale";
@@ -69,7 +70,7 @@ function ensureBoard() {
     openLabel.textContent = STRING_NAMES[s];
     open.appendChild(openLabel);
     row.appendChild(open);
-    cells.push({ el: openDot, label: openLabel, pc: openPc });
+    cells.push({ el: openDot, label: openLabel, pc: openPc, fret: 0 });
 
     for (let f = 1; f <= frets; f++) {
       const cell = document.createElement("div");
@@ -78,7 +79,7 @@ function ensureBoard() {
       dot.className = "dot";
       cell.appendChild(dot);
       row.appendChild(cell);
-      cells.push({ el: dot, label: null, pc: (openPc + f) % 12 });
+      cells.push({ el: dot, label: null, pc: (openPc + f) % 12, fret: f });
     }
     strings.appendChild(row);
   });
@@ -89,13 +90,17 @@ function ensureBoard() {
 function paintBoard() {
   ensureBoard();
   const play = state.playKey;
+  const box = state.positionsOn ? positionWindow() : null;
   for (let i = 0; i < cells.length; i++) {
     const cell = cells[i];
     const cls = noteClass(cell.pc);
     const el = cell.el;
     if (cell.label) cell.label.classList.add("off");
-    el.className = "dot " + cls + (cell.pc === play ? " playing" : "");
-    const name = pcName(cell.pc);
+    const faded = box && (cell.fret < box.start || cell.fret > box.end) ? " faded" : "";
+    const ring = cell.pc === play ? " playing" : "";
+    el.className = "dot " + cls + ring + faded;
+    const iv = intervalFromRoot(cell.pc);
+    const name = state.showIntervals ? intervalLabel(iv) : pcName(cell.pc);
     if (el.textContent !== name) el.textContent = name;
   }
 }

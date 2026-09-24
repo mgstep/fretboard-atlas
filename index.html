@@ -33,6 +33,9 @@
       <label>&nbsp;
         <button id="linkKeys" class="active" title="Keep scale key locked to playing-over key">Link keys</button>
       </label>
+      <label>&nbsp;
+        <button id="intervalToggle" title="Show scale degrees instead of letter names">Note names</button>
+      </label>
     </div>
   </header>
 
@@ -46,9 +49,19 @@
         <div><i class="swatch" style="background:transparent;border:1px solid #666"></i>Other notes</div>
       </div>
       <div class="fretboard" id="board"></div>
+      <div class="pos-bar">
+        <button id="posToggle" type="button">Positions</button>
+        <div id="positions"></div>
+        <span id="posRange" class="hint"></span>
+      </div>
       <div class="chord-bar">
         <h2>Chords in this key</h2>
-        <p class="hint">Click a chord to mark its notes as focus tones. Click it again to clear.</p>
+        <p class="hint">Triads built on each scale degree. Click one to focus its notes. The chord root stays red.</p>
+        <div class="chords" id="diatonic"></div>
+      </div>
+      <div class="chord-bar">
+        <h2>Chord types on the root</h2>
+        <p class="hint">Click a type to mark those notes as focus tones. Click it again to clear.</p>
         <div class="chords" id="chords"></div>
       </div>
     </section>
